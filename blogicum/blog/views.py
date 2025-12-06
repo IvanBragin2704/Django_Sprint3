@@ -4,11 +4,11 @@ from django.utils import timezone
 
 
 def index(request):
-    current_time = timezone.now()
+    # Убрали current_time так как он не используется в этой функции
     template = 'blog/index.html'
 
     post_list = Post.objects.filter(
-        pub_date__lte=current_time,
+        pub_date__lte=timezone.now(),  # ← Используем timezone.now() напрямую
         is_published=True,
         category__is_published=True
     ).select_related(
@@ -25,12 +25,12 @@ def index(request):
 
 def post_detail(request, id):
     template = 'blog/detail.html'
-    current_time = timezone.now()
+    # Убрали current_time так как он не используется
 
     post = get_object_or_404(
         Post.objects.select_related('category', 'author', 'location'),
         pk=id,
-        pub_date__lte=current_time,
+        pub_date__lte=timezone.now(),  # ← Используем напрямую
         is_published=True,
         category__is_published=True
     )
@@ -41,7 +41,7 @@ def post_detail(request, id):
 
 def category_posts(request, category_slug):
     template = 'blog/category.html'
-    current_time = timezone.now()
+    # current_time здесь тоже не используется
 
     category = get_object_or_404(
         Category,
@@ -49,9 +49,9 @@ def category_posts(request, category_slug):
         is_published=True
     )
 
-    post_list = category.posts.filter(  # ← Вот оно!
+    post_list = category.posts.filter(
         is_published=True,
-        pub_date__lte=timezone.now()
+        pub_date__lte=timezone.now()  # ← Используем напрямую
     ).order_by('-pub_date')
 
     context = {
