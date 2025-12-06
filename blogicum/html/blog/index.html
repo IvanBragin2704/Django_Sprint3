@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}
+  Лента записей
+{% endblock %}
+{% block content %}
+  <h1 class="mb-5">Лента записей</h1>
+{% for post in post_list %}
+<article class="mb-5">
+  <h2>{{ post.title }}</h2>  <!-- Добавлено использование title -->
+  <p>
+    Категория:
+    <a href="{% url 'blog:category_posts' post.category.slug %}">
+      {{ post.category.title }}  <!-- Используем category.title и category.slug -->
+    </a>
+  </p>
+  {% if post.location and post.location.is_published %}
+    <p>Местоположение: {{ post.location.name }}</p>  <!-- Используем location.name -->
+  {% endif %}
+  <p>{{ post.text|truncatewords:10 }}</p>
+  <a href="{% url 'blog:post_detail' post.id %}">Читать полный текст</a>
+</article>
+{% empty %}
+<p>Нет опубликованных записей.</p>
+{% endfor %}
+{% endblock %}
